@@ -6,12 +6,22 @@ var tweetGallery = {
 	options : {
 		screen_names : [
 			'nathanaelnsmith',
-			'_ifnull'
+			'_ifnull',
+			'amandasmitty'
 		],
-		gallery_hash : '#testgallery',
-		refresh : 60 * 1000
+		gallery_hash : '#familyshare',
+		refresh : 60 * 1000 * 10,
+		scale : 'fit'
 	},
 	init : function () {
+		switch(tweetGallery.options.scale) {
+			case 'fit':
+			case 'fill':
+			case 'actual':
+				$('#slider').addClass(tweetGallery.options.scale);
+			break;
+			default:
+		}
 		tweetGallery.getTweets();
 	},
 	photos : new Array(),
@@ -27,7 +37,7 @@ var tweetGallery = {
 					if (pullCount == tweetGallery.options.screen_names.length) {
 						tweetGallery.makeList();
 						
-						$('#slider').tinySlider({auto: true, pause: false, nav: false});
+						$('#slider').tinySlider({auto: true, pause: false, nav: false, delay: 15000});
 						
 						$(window).resize(function(){
 							$('.vert-center li').css('line-height',$(window).height() + 'px');
@@ -67,8 +77,9 @@ var tweetGallery = {
 		return temp;
 	},
 	makeList : function () {
+		tweetGallery.fisherYates(tweetGallery.photos);
 		for(var i = 0; i < tweetGallery.photos.length; i++) {
-			$('#slider .slides').append('<li style="line-height:' + $(window).height() + 'px' + '"><img src="' + tweetGallery.photos[i].url + '" alt="" /></li>');
+			$('#slider .slides').append('<li style="line-height:' + $(window).height() + 'px' + '"><img src="' + tweetGallery.photos[i].url + ':large" alt="" /></li>');
 		}
 	},
 	checkNewTweets : function () {
@@ -81,10 +92,21 @@ var tweetGallery = {
 					var temp = tweetGallery.filterByHashtag(data).reverse();
 					tweetGallery.photos = temp.concat(tweetGallery.photos);
 					for(var i = 0; i < temp.length; i++) {
-						$('#slider .slides').prepend('<li style="line-height:' + $(window).height() + 'px' + '"><img src="' + temp[i].url + '" alt="" /></li>');
+						$('#slider .slides').prepend('<li style="line-height:' + $(window).height() + 'px' + '"><img src="' + temp[i].url + ':large" alt="" /></li>');
 					}
 				}
 			});
 		}
+	},
+	fisherYates : function  ( myArray ) {
+  		var i = myArray.length;
+  		if ( i == 0 ) return false;
+  		while ( --i ) {
+  			var j = Math.floor( Math.random() * ( i + 1 ) );
+     			var tempi = myArray[i];
+     			var tempj = myArray[j];
+     			myArray[i] = tempj;
+     			myArray[j] = tempi;
+ 		}
 	}
 }
